@@ -10,8 +10,20 @@
 (defn show-success []
   (view/success))
 
+(def non-empty [#(empty? %) "Cannot be empty"])
+
+(def validators
+  {:first-name non-empty
+   :last-name non-empty})
+
+(defn validate-one [[f v]]
+  (when-let [[validator msg] (validators f)]
+    (if (validator v)
+      [f v msg])))
+
 (defn validate [params]
-  [])
+  (filter seq
+          (map validate-one params)))
 
 (defn handle-post [params]
   (let [errors (validate params)]
