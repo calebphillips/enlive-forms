@@ -6,37 +6,22 @@
             [clojure.zip :as zip]
             [net.cgrand.enlive-html :as en]))
 
-(defn text-field [id label]
-  [:div.control-group
-   [:label.control-label {:for id} label]
-   [:div.controls
-    (fh/text-field id)]])
-
-(defn app-form []
-  (fh/form-to [:post "/"]
-           (text-field "first-name" "First Name")
-           (text-field "last-name" "Last Name")
-           [:input {:type "submit" :class "btn" :value "Apply"}]))
-
 (en/deftemplate entire-form "ins_app/views/app.html" [])
+
+(en/deftemplate entire-form-we "ins_app/views/app.html" [errors]
+  [:div.control-group]
+  (fn [nd]
+    (let [error-groups (map #(str (name (first %)) "-group") errors)
+          cls (get-in nd [:attrs :id])]
+      (if (some #{cls} error-groups)
+        ((en/add-class "error") nd)
+        nd))))
 
 (defn new-form []
   (apply str (entire-form)))
 
-(defn add-error-class-to-controls [form]
-  (loop [loc (zip/vector-zip form)]
-    (if (zip/end? loc)
-      (zip/root loc)
-      (recur
-       (zip/next
-        (if (= (zip/node loc) :div.control-group)
-          (zip/replace loc :div.control-group.error)
-          loc))))))
-
 (defn new-form-with-errors [errors]
-  (layout/common "Insurance App"
-                 (add-error-class-to-controls
-                  (app-form))))
+  (apply str (entire-form-we errors)))
 
 (defn success []
   (layout/common "Insurance App"

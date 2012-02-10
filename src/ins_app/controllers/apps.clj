@@ -17,8 +17,8 @@
    :last-name non-empty})
 
 (defn validate-one [[f v]]
-  (when-let [[validator msg] (validators f)]
-    (if (validator v)
+  (when-let [[valid? msg] (validators f)]
+    (if (valid? v)
       [f v msg])))
 
 (defn validate [params]
