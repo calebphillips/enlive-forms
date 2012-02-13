@@ -22,8 +22,8 @@
       [f v msg])))
 
 (defn validate [params]
-  (filter seq
-          (map validate-one params)))
+  (let [errors (filter seq (map validate-one params))]
+    (apply hash-map (interleave (map first errors) (map rest errors)))))
 
 (defn handle-post [params]
   (let [errors (validate params)]

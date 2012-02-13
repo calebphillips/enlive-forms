@@ -6,22 +6,38 @@
             [clojure.zip :as zip]
             [net.cgrand.enlive-html :as en]))
 
-(en/deftemplate entire-form "ins_app/views/app.html" [])
+(def html-page "ins_app/views/app.html")
 
-(en/deftemplate entire-form-we "ins_app/views/app.html" [errors]
-  [:div.control-group]
-  (fn [nd]
-    (let [error-groups (map #(str (name (first %)) "-group") errors)
-          cls (get-in nd [:attrs :id])]
-      (if (some #{cls} error-groups)
-        ((en/add-class "error") nd)
-        nd))))
+(en/defsnippet field-snip html-page [:.control-group]
+  [[field-name field-title error?]]
+  [:.control-group] (fn [nd]
+                      ((en/set-attr :id (str (name field-name) "-group"))
+                       (if error?
+                         ((en/add-class "error") nd)
+                         nd)))
+  [:label] (en/do->
+            (en/content field-title)
+            (en/set-attr :for (name field-name)))
+  [:input] (en/do->
+            (en/set-attr :id (name field-name))
+            (en/set-attr :name (name field-name)))
+  [:span.help-inline] (en/content "")
+  )
+
+(def fields [[:first-name "First Name"]
+             [:last-name "Last Name"]
+             [:age "Age"]])
+
+(en/deftemplate form-template "ins_app/views/app.html" [errors]
+  [:fieldset] (en/content
+               (map #(field-snip (conj % ((first %) errors)))
+                    fields)))
 
 (defn new-form []
-  (apply str (entire-form)))
+  (apply str (form-template {})))
 
 (defn new-form-with-errors [errors]
-  (apply str (entire-form-we errors)))
+  (apply str (form-template errors)))
 
 (defn success []
   (layout/common "Insurance App"
