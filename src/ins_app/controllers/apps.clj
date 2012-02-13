@@ -19,23 +19,24 @@
 (defn validate-one [[f v]]
   (when-let [[valid? msg] (validators f)]
     (if (valid? v)
-      [f v msg])))
+      {f [v msg]})))
 
 (defn validate [params]
   (let [errors (filter seq (map validate-one params))]
-    (apply hash-map (interleave (map first errors) (map rest errors)))))
+    (reduce merge errors)))
 
-(defn params->vec [params]
-  (vec (map (fn [[k v]] [k [v nil]]) params)))
-
-(defn vec->map [pv]
-  (apply hash-map (apply concat pv)))
+(defn params->msg-vec [params]
+  (apply hash-map
+         (apply concat 
+                (vec
+                 (map (fn [[k v]] [k [v nil]])
+                      params)))))
 
 (defn handle-post [params]
   (let [errors (validate params)]
     (if (seq errors)
       (view/new-form-with-errors
-        (merge (-> params params->vec vec->map)
+        (merge (params->msg-vec params)
                (validate params)))
       (ring/redirect "/success"))))
 
