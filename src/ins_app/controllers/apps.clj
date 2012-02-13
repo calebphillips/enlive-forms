@@ -4,21 +4,17 @@
             [ring.util.response :as ring]
             [ins-app.views.apps :as view]))
 
-(defn new-form []
-  (view/new-form))
-
-(defn show-success []
-  (view/success))
-
-(def non-empty [#(empty? %) "Cannot be empty"])
-
+(def non-empty [#(seq %) "Cannot be empty"])
+(def integer [#(try (Integer/parseInt %)
+                    (catch NumberFormatException nfe false)) "Must be a valid integer"])
 (def validators
   {:first-name non-empty
-   :last-name non-empty})
+   :last-name non-empty
+   :age integer})
 
 (defn validate-one [[f v]]
   (when-let [[valid? msg] (validators f)]
-    (if (valid? v)
+    (if (not (valid? v))
       {f [v msg]})))
 
 (defn validate [params]
@@ -36,11 +32,10 @@
   (let [errors (validate params)]
     (if (seq errors)
       (view/new-form-with-errors
-        (merge (params->msg-vec params)
-               (validate params)))
+        (merge (params->msg-vec params) errors))
       (ring/redirect "/success"))))
 
 (defroutes routes
-  (GET "/" [] (new-form))
-  (GET "/success" [] (show-success))
+  (GET "/" [] (view/new-form))
+  (GET "/success" [] (view/success))
   (POST "/" {params :params} (handle-post params)))
