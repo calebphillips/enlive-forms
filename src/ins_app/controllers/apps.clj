@@ -22,17 +22,27 @@
     (reduce merge errors)))
 
 (defn params->msg-vec [params]
-  (apply hash-map
-         (apply concat 
-                (vec
-                 (map (fn [[k v]] [k [v nil]])
-                      params)))))
+  (reduce (fn [m [k v]] (assoc m k [v nil]))
+          {}
+          params))
+
+;; I think it will be clearer if the params get transformed first
+;; and then validate just updates the appropriate messages
+;; Right now there are 2 functions generating the same data format
+(defn add-messages [params]
+  (let [errors (validate params)
+        any-errors? (seq errors)]
+    [any-errors?
+     (merge (params->msg-vec params)
+            (validate params))]))
+;;
+;; I think I will move everything above this to a validation namespace
+;; 
 
 (defn handle-post [params]
-  (let [errors (validate params)]
-    (if (seq errors)
-      (view/new-form-with-errors
-        (merge (params->msg-vec params) errors))
+  (let [[has-errors? params-with-messsages] (add-messages params)]
+    (if has-errors?
+      (view/new-form-with-errors params-with-messsages)
       (ring/redirect "/success"))))
 
 (defroutes routes
