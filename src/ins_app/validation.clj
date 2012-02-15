@@ -8,13 +8,13 @@
    :last-name non-empty
    :age integer})
 
-(defn validate-one [[f v]]
+(defn validate-one [[f v] validators]
   (when-let [[valid? msg] (validators f)]
     (if (not (valid? v))
       {f [v msg]})))
 
 (defn validate [params]
-  (let [errors (filter seq (map validate-one params))]
+  (let [errors (filter seq (map validate-one params validators))]
     (reduce merge errors)))
 
 (defn params->msg-vec [params]
