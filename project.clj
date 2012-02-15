@@ -4,5 +4,4 @@
                  [ring/ring-jetty-adapter "0.3.10"]
                  [ring/ring-devel "1.0.2"]
                  [compojure "0.6.4"]
-                 [hiccup "0.3.6"]
                  [enlive "1.0.0"]])
