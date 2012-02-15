@@ -1,14 +1,9 @@
-(ns ins-app.views.apps
-  (:use [hiccup.core :only [html h]]
-        [hiccup.page-helpers :only [doctype]])
-  (:require [ins-app.views.layout :as layout]
-            [hiccup.form-helpers :as fh]
-            [clojure.zip :as zip]
-            [net.cgrand.enlive-html :as en]))
+(ns ins-app.view
+  (:require [net.cgrand.enlive-html :as en]))
 
-(def html-page "ins_app/views/app.html")
+(def form-html "ins_app/form.html")
 
-(en/defsnippet field-snip html-page [:.control-group]
+(en/defsnippet field-snip form-html [:.control-group]
   [[field-name field-title value message]]
   [:.control-group] (fn [nd]
                       ((en/set-attr :id (str (name field-name) "-group"))
@@ -29,7 +24,7 @@
              [:last-name "Last Name"]
              [:age "Age"]])
 
-(en/deftemplate form-template "ins_app/views/app.html" [errors]
+(en/deftemplate form-template form-html [errors]
   [:fieldset] (en/content
                (map #(field-snip (concat % ((first %) errors)))
                     fields)))
@@ -41,5 +36,4 @@
   (apply str (form-template errors)))
 
 (defn success []
-  (layout/common "Insurance App"
-                 [:h1 "You did it! Stay Strong!"]))
+  "You did it!")

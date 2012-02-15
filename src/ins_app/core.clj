@@ -4,10 +4,10 @@
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [ring.adapter.jetty :as ring]
-            [ins-app.controllers.apps]))
+            [ins-app.controller]))
 
 (defroutes routes
-  ins-app.controllers.apps/routes
+  ins-app.controller/routes
   (route/resources "/"))
 
 (def application

@@ -1,8 +1,8 @@
-(ns ins-app.controllers.apps
+(ns ins-app.controller
   (:use [compojure.core :only [defroutes GET POST]])
   (:require [clojure.string :as str]
             [ring.util.response :as ring]
-            [ins-app.views.apps :as view]))
+            [ins-app.view :as view]))
 
 (def non-empty [#(seq %) "Cannot be empty"])
 (def integer [#(try (Integer/parseInt %)
