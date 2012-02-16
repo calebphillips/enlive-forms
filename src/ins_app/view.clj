@@ -24,9 +24,11 @@
              [:last-name "Last Name"]
              [:age "Age"]])
 
+(defn value-and-message [{:keys [value message]}] [value message])
+
 (en/deftemplate form-template form-html [errors]
   [:fieldset] (en/content
-               (map #(field-snip (concat % ((first %) errors)))
+               (map #(field-snip (concat % (value-and-message ((first %) errors))))
                     fields)))
 
 (defn new-form []

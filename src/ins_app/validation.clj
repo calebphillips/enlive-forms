@@ -8,26 +8,28 @@
    :last-name non-empty
    :age integer})
 
-(defn validate-one [[f v] validators]
+(defn message-for [f v validators]
   (when-let [[valid? msg] (validators f)]
     (if (not (valid? v))
-      {f [v msg]})))
+      msg)))
 
-(defn validate [params]
-  (let [errors (filter seq (map validate-one params validators))]
-    (reduce merge errors)))
+(defn messages [ps validators]
+  (let [get-msg #(message-for %1 %2 validators)]
+    (reduce (fn [m [f v]] (assoc m f (get-msg f v))) {} ps)))
 
-(defn params->msg-vec [params]
-  (reduce (fn [m [k v]] (assoc m k [v nil]))
-          {}
-          params))
 
-;; I think it will be clearer if the params get transformed first
-;; and then validate just updates the appropriate messages
-;; Right now there are 2 functions generating the same data format
+(defn values-and-messages [params]
+  (let [ms (messages params validators)]
+    (reduce merge
+            (for [f (keys params)]
+              {f {:value (params f) :message (ms f)}}))))
+
+(defn any-errors? [vms]
+  (seq (filter (fn [[k v]] (not (nil? (v :message)))) vms)))
+
+;; Alot of the param handling may need to be extracted to
+;; its own namespace, then we could just return the vms list
+;; and clients could filter on params/has-error?
 (defn add-messages [params]
-  (let [errors (validate params)
-        any-errors? (seq errors)]
-    [any-errors?
-     (merge (params->msg-vec params)
-            (validate params))]))
+  (let [vms (values-and-messages params)]
+    [(any-errors? vms) vms]))
