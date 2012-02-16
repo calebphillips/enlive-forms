@@ -4,7 +4,7 @@
 (def form-html "ins_app/form.html")
 
 (en/defsnippet field-snip form-html [:.control-group]
-  [[field-name field-title value message]]
+  [field-name field-title value message]
   [:.control-group] (fn [nd]
                       ((en/set-attr :id (str (name field-name) "-group"))
                        (if message
@@ -20,22 +20,21 @@
   [:span.help-inline] (en/content message)
   )
 
-(def fields [[:first-name "First Name"]
+(def field-names [[:first-name "First Name"]
              [:last-name "Last Name"]
              [:age "Age"]])
 
-(defn value-and-message [{:keys [value message]}] [value message])
+(defn field-with-title [[name title] {:keys [value message]}]
+  [name title value message])
 
-(en/deftemplate form-template form-html [errors]
+(en/deftemplate form-template form-html [fields]
   [:fieldset] (en/content
-               (map #(field-snip (concat % (value-and-message ((first %) errors))))
-                    fields)))
+               (map #(apply field-snip (field-with-title % (fields (first %))))
+                    field-names)))
 
-(defn new-form []
-  (apply str (form-template {})))
-
-(defn new-form-with-errors [errors]
-  (apply str (form-template errors)))
+(defn new-form
+  ([] (new-form {}))
+  ([errors] (apply str (form-template errors))))
 
 (defn success []
   "You did it!")

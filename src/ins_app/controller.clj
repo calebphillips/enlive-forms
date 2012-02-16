@@ -8,7 +8,7 @@
 (defn handle-post [params]
   (let [fields (valid/params->fields params)]
     (if (valid/any-errors? fields)
-      (view/new-form-with-errors fields)
+      (view/new-form fields)
       (ring/redirect "/success"))))
 
 (defroutes routes
