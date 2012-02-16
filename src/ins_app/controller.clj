@@ -6,9 +6,9 @@
             [ins-app.validation :as valid]))
 
 (defn handle-post [params]
-  (let [[has-errors? params-with-messsages] (valid/add-messages params)]
-    (if has-errors?
-      (view/new-form-with-errors params-with-messsages)
+  (let [fields (valid/params->fields params)]
+    (if (valid/any-errors? fields)
+      (view/new-form-with-errors fields)
       (ring/redirect "/success"))))
 
 (defroutes routes

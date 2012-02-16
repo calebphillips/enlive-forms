@@ -1,4 +1,5 @@
-(ns ins-app.validation)
+(ns ins-app.validation
+  (:require [ins-app.fields :as f]))
 
 (def non-empty [#(seq %) "Cannot be empty"])
 (def integer [#(try (Integer/parseInt %)
@@ -8,24 +9,27 @@
    :last-name non-empty
    :age integer})
 
-(defn message-for [f v validators]
-  (when-let [[valid? msg] (validators f)]
+(defn message-for [fld v validators]
+  (when-let [[valid? msg] (validators fld)]
     (if (not (valid? v))
       msg)))
 
-(defn messages [ps validators]
-  (let [get-msg #(message-for %1 %2 validators)]
-    (reduce (fn [m [f v]] (assoc m f (get-msg f v))) {} ps)))
-
+(defn messages [params validators]
+  (let [get-msg #(message-for %1 %2 validators)
+        fld->msg #(assoc %1 %2 (get-msg %2 %3))]
+    (reduce (fn [m [fld v]] (fld->msg m fld v)) {} params)))
 
 (defn values-and-messages [params]
-  (let [ms (messages params validators)]
+  (let [msgs (messages params validators)
+        field-map #(hash-map % (f/new-field (params %) (msgs %)))]
     (reduce merge
-            (for [f (keys params)]
-              {f {:value (params f) :message (ms f)}}))))
+            (map field-map (keys params)))))
 
-(defn any-errors? [vms]
-  (seq (filter (fn [[k v]] (not (nil? (v :message)))) vms)))
+(defn any-errors? [fields]
+  (seq (filter (fn [[_ fld]] (f/has-error? fld)) fields)))
+
+(defn params->fields [params]
+  (values-and-messages params))
 
 ;; Alot of the param handling may need to be extracted to
 ;; its own namespace, then we could just return the vms list
