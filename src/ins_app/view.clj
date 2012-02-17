@@ -4,7 +4,7 @@
 (def form-html "ins_app/form.html")
 
 (en/defsnippet field-snip form-html [:.control-group]
-  [field-name field-title value message]
+  [{field-name :name field-title :title value :value message :message}]
   [:.control-group] (fn [nd]
                       ((en/set-attr :id (str (name field-name) "-group"))
                        (if message
@@ -17,20 +17,20 @@
             (en/set-attr :id (name field-name))
             (en/set-attr :name (name field-name))
             (en/set-attr :value value))
-  [:span.help-inline] (en/content message)
-  )
+  [:span.help-inline] (en/content message))
 
-(def field-names [[:first-name "First Name"]
-             [:last-name "Last Name"]
-             [:age "Age"]])
+(def field-titles {:first-name "First Name"
+                   :last-name "Last Name"
+                   :age "Age"})
 
-(defn field-with-title [[name title] {:keys [value message]}]
-  [name title value message])
+(defn titles+fields [titles fields]
+  (map (fn [[n t]] (merge (hash-map :name n :title t)
+                         (fields n))) titles))
 
 (en/deftemplate form-template form-html [fields]
   [:fieldset] (en/content
-               (map #(apply field-snip (field-with-title % (fields (first %))))
-                    field-names)))
+               (map field-snip
+                    (titles+fields field-titles fields))))
 
 (defn new-form
   ([] (new-form {}))
