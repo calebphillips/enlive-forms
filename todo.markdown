@@ -1,3 +1,4 @@
-* implement common layout
 * Save application data
-* Implement log for employee to view submitted apps
+* get db config duplication out and make deployable to heroku
+* Implement log in for employee to view submitted apps
+* Add rating
