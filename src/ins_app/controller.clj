@@ -13,5 +13,7 @@
 
 (defroutes routes
   (GET "/" [] (view/new-form))
+  (GET "/about" [] (view/about))
+  (GET "/contact" [] (view/contact))
   (GET "/success" [] (view/success))
   (POST "/" {params :params} (handle-post params)))

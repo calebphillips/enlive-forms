@@ -1,2 +1,3 @@
-* extract params fns to their own ns
-* show some love to the field-snip
+* implement common layout
+* Save application data
+* Implement log for employee to view submitted apps
