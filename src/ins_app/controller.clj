@@ -3,11 +3,12 @@
   (:require [clojure.string :as str]
             [ring.util.response :as ring]
             [ins-app.view :as view]
-            [ins-app.validation :as valid]))
+            [ins-app.validation :as valid]
+            [ins-app.data :as data]))
 
 (defn handle-post [params]
-  (let [fields (valid/params->fields params)]
-    (if (valid/any-errors? fields)
+  (let [fields (data/apply-values-to-fields params)]
+    (if (data/any-errors? fields)
       (view/new-form fields)
       (ring/redirect "/success"))))
 

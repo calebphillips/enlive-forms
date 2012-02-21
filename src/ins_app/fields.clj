@@ -1,5 +1,4 @@
-(ns ins-app.fields
-  )
+(ns ins-app.fields)
 
 (defn new-field [value message]
   {:value value :message message})

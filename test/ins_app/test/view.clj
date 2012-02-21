@@ -9,4 +9,8 @@
            {:f1 "F 1"}
            {:f1 {:value :v1 :message :m1}}))))
 
+(deftest squash-name-into-fields
+  (is (= [{:name :f1 :title "F1" :value :v1 :message :m1}]
+         (squash-name-in {:f1 {:title "F1" :value :v1 :message :m1}}))))
+
 

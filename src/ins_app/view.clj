@@ -20,15 +20,22 @@
             (en/set-attr :value value))
   [:span.help-inline] (en/content message))
 
+;; TO BE DELETED AFTER data ns intro
 (def field-titles {:first-name "First Name"
                    :last-name "Last Name"
-                   :age "Age"})
+                   :age "Age"
+                   :favorite-color "Favorite Color"})
 
+;; TO BE DELETED AFTER data ns intro
 ;; Smashing any encapsulation in the field here.
 ;; Should I retain the field and just assoc title into it? 
 (defn titles+fields [titles fields]
   (map (fn [[n t]] (merge (hash-map :name n :title t)
                          (fields n))) titles))
+
+;; with new data structure, just squash :name into the map
+(defn squash-name-in [fields]
+  (map (fn [[n m]] (assoc m :name n)) fields))
 
 (en/defsnippet form-template form-html [:#the-form] [fields]
   [:fieldset] (en/content
@@ -41,7 +48,7 @@
 
 (defn new-form
   ([] (new-form {}))
-  ([errors] (apply str (layout "Home" (form-template errors)))))
+  ([fields] (apply str (layout "Home" (form-template fields)))))
 
 (defn about []
   (apply str (layout "About" "")))

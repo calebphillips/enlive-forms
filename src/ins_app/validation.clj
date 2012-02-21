@@ -1,13 +1,17 @@
 (ns ins-app.validation
   (:require [ins-app.fields :as f]))
 
+;; Rename this ns to data?
+
 (def non-empty [#(seq %) "Cannot be empty"])
 (def integer [#(try (Integer/parseInt %)
                     (catch NumberFormatException nfe false)) "Must be a valid integer"])
+
 (def validators
   {:first-name non-empty
    :last-name non-empty
-   :age integer})
+   :age integer
+   :favorite-color non-empty})
 
 (defn message-for [fld v validators]
   (when-let [[valid? msg] (validators fld)]
@@ -25,15 +29,8 @@
     (reduce merge
             (map field-map (keys params)))))
 
-(defn any-errors? [fields]
-  (seq (filter (fn [[_ fld]] (f/has-error? fld)) fields)))
-
 (defn params->fields [params]
   (values-and-messages params))
 
-;; Alot of the param handling may need to be extracted to
-;; its own namespace, then we could just return the vms list
-;; and clients could filter on params/has-error?
-(defn add-messages [params]
-  (let [vms (values-and-messages params)]
-    [(any-errors? vms) vms]))
+(defn any-errors? [fields]
+  (seq (filter (fn [[_ fld]] (f/has-error? fld)) fields)))
