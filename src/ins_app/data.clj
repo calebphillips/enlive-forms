@@ -8,16 +8,14 @@
 (def integer {:fn #(is-int? %) :message "Must be a valid integer"})
 
 (def field-defs
-  {:first-name {:title "First Name" :validator non-empty}
-   :last-name {:title "Last Name" :validator non-empty}
-   :age {:title "Age" :validator integer}
-   :favorite-color {:title "Favorite Color" :validator non-empty}
-   :sandwich {:title "Sandwich"}})
+  [[:first-name {:title "First Name" :validator non-empty}]
+   [:last-name {:title "Last Name" :validator non-empty}]
+   [:age {:title "Age" :validator integer}]
+   [:favorite-color {:title "Favorite Color" :validator non-empty}]])
 
 (defn add-values [params]
-  (apply hash-map
-         (mapcat (fn [[name m]] [name (assoc m :value (params name))])
-                 field-defs)))
+  (map (fn [[name m]] [name (assoc m :value (params name))])
+          field-defs))
 
 (defn validator-fn [field]
   (get-in field [:validator :fn]))
@@ -36,9 +34,12 @@
     true))
 
 (defn add-messages [fields]
-  (apply hash-map
-         (mapcat (fn [[n m]] [n (assoc m :message (message m))]) fields)))
+  (map (fn [[n m]] [n (assoc m :message (message m))])
+       fields))
 
+;; Public functions
+;; Figure out how to make other fns private and still
+;; test them.
 (defn apply-values-to-fields [params]
   (-> params
       add-values
