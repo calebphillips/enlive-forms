@@ -5,8 +5,8 @@
 (defn always-true [v] true)
 (defn always-false [v] false)
 
-(def v1 [always-true "Fred"])
-(def v2 [always-false "Joe"])
+(def v1 {:fn always-true :message "Fred"})
+(def v2 {:fn always-false :message "Joe"})
 
 (def test-defs {:f1 {:title "F1" :validator v1}
                   :f2 {:title "F2" :validator v2}})
