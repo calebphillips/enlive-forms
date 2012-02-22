@@ -13,10 +13,6 @@
    [:age {:title "Age" :validator integer}]
    [:favorite-color {:title "Favorite Color" :validator non-empty}]])
 
-(defn add-values [params]
-  (map (fn [[name m]] [name (assoc m :value (params name))])
-          field-defs))
-
 (defn validator-fn [field]
   (get-in field [:validator :fn]))
 
@@ -36,6 +32,10 @@
 (defn add-messages [fields]
   (map (fn [[n m]] [n (assoc m :message (message m))])
        fields))
+
+(defn add-values [params]
+  (map (fn [[name m]] [name (assoc m :value (params name))])
+          field-defs))
 
 ;; Public functions
 ;; Figure out how to make other fns private and still
