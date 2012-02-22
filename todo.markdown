@@ -1,8 +1,7 @@
 * One place to add a new field
   Finish replacing validation with data ns
-         Something is wrong in new fields map.
-         The problem is view.clj line 50, which just creates an empty map
-             Controller may need to call data/field-defaults and always pass something.
+         Dropping fields without validator
+         Fields are out of order because I switch to all maps instead of a list
   Extract duplication from data ns
 * Save application data
 * get db config duplication out and make deployable to heroku

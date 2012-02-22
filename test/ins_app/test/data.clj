@@ -17,9 +17,16 @@
             :f2 {:title "F2" :validator v2 :value nil}}
            (add-values {})))))
 
+(deftest test-message
+  (is (= "Joe"
+         (message {:validator v2})))
+  (is (not (message {:value "Hi"}))))
+
 (deftest test-add-messages
   (is (= {:f1 {:validator v2 :value "" :message "Joe"}}
-         (add-messages {:f1 {:validator v2 :value ""}}))))
+         (add-messages {:f1 {:validator v2 :value ""}})))
+  (is (= {:f1 {:value "" :message nil}}
+         (add-messages {:f1 {:value ""}}))))
 
 (deftest test-apply-values
   (binding [field-defs test-defs]

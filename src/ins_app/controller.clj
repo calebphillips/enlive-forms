@@ -3,7 +3,6 @@
   (:require [clojure.string :as str]
             [ring.util.response :as ring]
             [ins-app.view :as view]
-            [ins-app.validation :as valid]
             [ins-app.data :as data]))
 
 (defn handle-post [params]
@@ -13,7 +12,7 @@
       (ring/redirect "/success"))))
 
 (defroutes routes
-  (GET "/" [] (view/new-form))
+  (GET "/" [] (view/new-form data/field-defs))
   (GET "/about" [] (view/about))
   (GET "/contact" [] (view/contact))
   (GET "/success" [] (view/success))
