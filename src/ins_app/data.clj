@@ -1,4 +1,5 @@
-(ns ins-app.data)
+(ns ins-app.data
+  (:require [clojure.string :as str]))
 
 (defn is-int? [x]
   (try (Integer/parseInt x)
@@ -7,11 +8,16 @@
 (def non-empty {:fn #(seq %) :message "Cannot be empty"})
 (def integer {:fn #(is-int? %) :message "Must be a valid integer"})
 
+(let [colors #{"Red" "Green" "Blue"}]
+  (def valid-color
+    {:fn #(colors %)
+     :message (str "Must be one of: " (str/join ", " (seq colors)))}))
+
 (def field-defs
   [[:first-name {:title "First Name" :validator non-empty}]
    [:last-name {:title "Last Name" :validator non-empty}]
    [:age {:title "Age" :validator integer}]
-   [:favorite-color {:title "Favorite Color" :validator non-empty}]])
+   [:favorite-color {:title "Favorite Color" :validator valid-color}]])
 
 (defn validator-fn [field]
   (get-in field [:validator :fn]))
