@@ -11,6 +11,11 @@
 (def test-defs {:f1 {:title "F1" :validator v1}
                   :f2 {:title "F2" :validator v2}})
 
+(deftest test-is-int?
+  (is (is-int? "1"))
+  (is (is-int? "456"))
+  (is (not (is-int? "abc"))))
+
 (deftest test-add-values
   (binding [field-defs test-defs]
     (is (= {:f1 {:title "F1" :validator v1 :value nil}
@@ -40,3 +45,8 @@
                     :f2 {:validator v2}}))
   (is (not (any-errors? {:f1 {}})))
   )
+
+(deftest test-valid?
+  (is (valid? {:validator v1}))
+  (is (not (valid? {:validator v2})))
+  (is (valid? {:value "This"})))

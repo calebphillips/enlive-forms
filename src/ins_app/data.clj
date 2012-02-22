@@ -1,8 +1,11 @@
 (ns ins-app.data)
 
+(defn is-int? [x]
+  (try (Integer/parseInt x)
+       (catch NumberFormatException nfe false)))
+
 (def non-empty [#(seq %) "Cannot be empty"])
-(def integer [#(try (Integer/parseInt %)
-                    (catch NumberFormatException nfe false)) "Must be a valid integer"])
+(def integer [#(is-int? %) "Must be a valid integer"])
 
 (def field-defs
   {:first-name {:title "First Name" :validator non-empty}
@@ -26,6 +29,12 @@
       (when-not (f (field :value))
         m))))
 
+(defn valid? [field]
+  (if (field :validator)
+    (let [[f msg] (field :validator)]
+      (f (field :value)))
+    true))
+
 (defn add-messages [fields]
   (apply hash-map
          (mapcat (fn [[n m]] [n (assoc m :message (message m))]) fields)))
@@ -35,10 +44,5 @@
       add-values
       add-messages))
 
-;; Too dang complicated, extract something!
-;; Maybe a valid? function
 (defn any-errors? [fields]
-  (let [with-validators (filter (fn [[n m]] (m :validator)) fields)]
-    (some (fn [[n m]]  (not
-                       ((first (m :validator)) (m :value))))
-          with-validators)))
+  (some (fn [[n m]] (not (valid? m))) fields))
