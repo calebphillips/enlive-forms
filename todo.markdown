@@ -1,6 +1,4 @@
-* Restrict colors
-
-* Polish field-snip
+* Remove persistence code and dependencies
 
 * Save application data
 * get db config duplication out and make deployable to heroku
