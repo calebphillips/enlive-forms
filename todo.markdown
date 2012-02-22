@@ -1,3 +1,5 @@
+* Restrict colors
+
 * Polish field-snip
 
 * Save application data
